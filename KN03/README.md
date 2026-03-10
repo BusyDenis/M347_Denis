@@ -23,14 +23,14 @@ docker run -dit --name busybox4 --network tbz busybox
 
 | Container | Netzwerk | IP-Adresse |
 |-----------|----------|------------|
-| busybox1 | default bridge | 172.17.0.2 |
-| busybox2 | default bridge | 172.17.0.3 |
+| busybox1 | default bridge | 172.17.0.3 |
+| busybox2 | default bridge | 172.17.0.2 |
 | busybox3 | tbz | 172.18.0.2 |
 | busybox4 | tbz | 172.18.0.3 |
 
 ```bash
 docker inspect --format "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" busybox1
-# 172.17.0.2
+# 172.17.0.3
 ```
 
 ### 2. Tests von busybox1 (default bridge)
@@ -42,7 +42,7 @@ docker inspect --format "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}
 ```
 $ ip route
 default via 172.17.0.1 dev eth0
-172.17.0.0/16 dev eth0 scope link  src 172.17.0.2
+172.17.0.0/16 dev eth0 scope link  src 172.17.0.3
 ```
 
 Default Gateway: **172.17.0.1** -- busybox2 hat den gleichen Gateway, da beide im selben default bridge Netzwerk sind.
@@ -65,15 +65,19 @@ ping: bad address 'busybox3'
 
 Fehlgeschlagen -- busybox3 ist in einem anderen Netzwerk und der Name kann nicht aufgelöst werden.
 
-#### ping 172.17.0.3 (busybox2 by IP)
+#### Nachweis Name-Auflösung (Screenshot)
+
+![Name Resolution Tests](screenshots/name_resolution_tests.png)
+
+#### ping 172.17.0.2 (busybox2 by IP)
 
 ```
-$ ping -c 2 172.17.0.3
-PING 172.17.0.3 (172.17.0.3): 56 data bytes
-64 bytes from 172.17.0.3: seq=0 ttl=64 time=0.133 ms
-64 bytes from 172.17.0.3: seq=1 ttl=64 time=0.108 ms
+$ ping -c 2 172.17.0.2
+PING 172.17.0.2 (172.17.0.2): 56 data bytes
+64 bytes from 172.17.0.2: seq=0 ttl=64 time=0.093 ms
+64 bytes from 172.17.0.2: seq=1 ttl=64 time=0.172 ms
 
---- 172.17.0.3 ping statistics ---
+--- 172.17.0.2 ping statistics ---
 2 packets transmitted, 2 packets received, 0% packet loss
 ```
 
@@ -95,7 +99,7 @@ Fehlgeschlagen -- busybox3 ist in einem anderen Netzwerk (tbz). Die Netzwerke si
 
 ### 3. Tests von busybox3 (tbz network)
 
-![busybox3 Tests](screenshots/busybox3_tests.png)
+![busybox3 Tests](screenshots/busybox1_tests.png)
 
 #### Default Gateway
 
@@ -130,13 +134,13 @@ PING busybox4 (172.18.0.3): 56 data bytes
 
 Erfolgreich -- im user-defined Netzwerk (tbz) funktioniert die **DNS-Auflösung von Container-Namen**.
 
-#### ping 172.17.0.2 (busybox1 by IP)
+#### ping 172.17.0.3 (busybox1 by IP)
 
 ```
-$ ping -c 2 172.17.0.2
-PING 172.17.0.2 (172.17.0.2): 56 data bytes
+$ ping -c 2 172.17.0.3
+PING 172.17.0.3 (172.17.0.3): 56 data bytes
 
---- 172.17.0.2 ping statistics ---
+--- 172.17.0.3 ping statistics ---
 2 packets transmitted, 0 packets received, 100% packet loss
 ```
 
