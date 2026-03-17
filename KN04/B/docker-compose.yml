@@ -1,0 +1,27 @@
+services:
+  mariadb:
+    image: denissuc06/m347:kn02b-db
+    container_name: m347-kn04b-db
+    networks:
+      kn04b_net:
+        ipv4_address: 172.11.5.10
+
+  web:
+    image: denissuc06/m347:kn02b-web
+    container_name: m347-kn04b-web
+    depends_on:
+      - mariadb
+    ports:
+      - "8085:80"
+    networks:
+      kn04b_net:
+        ipv4_address: 172.11.5.11
+
+networks:
+  kn04b_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.11.0.0/16
+          ip_range: 172.11.5.0/24
+          gateway: 172.11.5.254
