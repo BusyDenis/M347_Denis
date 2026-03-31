@@ -21,7 +21,7 @@ Sie werden im Folgenden die drei Speicherarten testen.
 
 Sie werden hier zeigen, dass Ihr Speicher von ihrem Host mit dem Container geteilt wird. In der Theorie haben Sie gelernt für welche Zwecke dieser Speicher nützlich sein kann. Sie simulieren den Fall, dass Sie eine Applikation programmieren und regelmässig Änderungen im Code vornehmen und auf dem Container testen müssen. 
 
-Erstellen Sie ein Container (z.B. mit dem nginx Basis-Image) und fügen Sie ihm ein **Bind Mount** hinzu. Erstellen Sie jetzt ein Bash-Skript auf Ihrem Host-System (also wahrscheinlich in Ihrem Windows), welches eine einfache Ausgabe von Inhalt macht. Stellen Sie sicher, dass Ihr Code einzigartig ist und keine Kopie von Ihren Kollegen.  In Ihrem Container rufen Sie das Skript auf, so dass die Ausgabe angezeigt wird.  Ändern Sie das Skript nun in Ihrem Host-System und führen Sie es wieder auf dem Container aus. Die Änderungen sollten ebenfalls sichtbar sein.
+Erstellen Sie ein Container (z.B. mit dem nginx Basis-Image) und fügen Sie ihm ein **Bind Mount** hinzu. Erstellen Sie jetzt ein Bash-Skript auf Ihrem Host-System (also wahrscheinlich in Ihrem Windows), welches eine einfache Ausgabe von Inhalt macht. Stellen Sie sicher, dass Ihr Code einzigartig ist und keine Kopie von Ihren Kollegen. In Ihrem Container rufen Sie das Skript auf, so dass die Ausgabe angezeigt wird. Ändern Sie das Skript nun in Ihrem Host-System und führen Sie es wieder auf dem Container aus. Die Änderungen sollten ebenfalls sichtbar sein.
 
 **Abgabe:** 
 

@@ -1,0 +1,28 @@
+name: kn05c
+
+services:
+  nginx1:
+    image: nginx:latest
+    container_name: kn05c-nginx1
+    volumes:
+      # Named Volume — Long Syntax (nur erster Container)
+      - type: volume
+        source: kn05c_shared
+        target: /data
+      # Bind Mount (nur erster Container)
+      - type: bind
+        source: ./bind_host
+        target: /shared
+      # tmpfs (nur erster Container)
+      - type: tmpfs
+        target: /cache
+
+  nginx2:
+    image: nginx:latest
+    container_name: kn05c-nginx2
+    volumes:
+      # Named Volume — Short Syntax
+      - kn05c_shared:/data
+
+volumes:
+  kn05c_shared:
