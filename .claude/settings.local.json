@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ssh -i ~/.ssh/vockey.pem ubuntu@100.31.96.228 \"microk8s kubectl drain ip-172-31-69-115 --ignore-daemonsets --delete-emptydir-data\")",
+      "Bash(ssh -i ~/.ssh/vockey.pem ubuntu@100.31.96.228 \"microk8s kubectl delete node ip-172-31-69-115\")",
+      "Bash(ssh -i ~/.ssh/vockey.pem ubuntu@98.81.21.237 \"microk8s leave\")",
+      "Bash(ssh -i ~/.ssh/vockey.pem ubuntu@100.31.96.228 \"microk8s remove-node 172.31.69.115 --force\")",
+      "Bash(ssh:*)",
+      "Bash(npm --version)",
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Bash(npx playwright:*)",
+      "Bash(node screenshot.js)"
+    ]
+  }
+}
