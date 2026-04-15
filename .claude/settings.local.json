@@ -10,7 +10,20 @@
       "Bash(npm init:*)",
       "Bash(npm install:*)",
       "Bash(npx playwright:*)",
-      "Bash(node screenshot.js)"
+      "Bash(node screenshot.js)",
+      "WebFetch(domain:gitlab.com)",
+      "Bash(aws sts get-caller-identity:*)",
+      "Bash(aws ec2 describe-instances:*)",
+      "Bash(curl -sL \"https://gitlab.com/api/v4/projects/ch-tbz-it%2FStud%2Fm347/repository/tree?path=Kubernetes/Demo%20Project&ref=main\")",
+      "Bash(curl:*)",
+      "Bash(aws ec2 describe-security-groups:*)",
+      "Bash(aws ec2 authorize-security-group-ingress:*)",
+      "Bash(cp \"C:/Users/denis/Pictures/Screenshots/Screenshot 2026-04-14 140136.png\" \"C:/work/Git/M347_Denis/KN07/webapp-node1.png\")",
+      "Bash(cp \"C:/Users/denis/Pictures/Screenshots/Screenshot 2026-04-14 140143.png\" \"C:/work/Git/M347_Denis/KN07/webapp-node2.png\")",
+      "Bash(cp \"C:/Users/denis/Pictures/Screenshots/Screenshot 2026-04-14 140610.png\" \"C:/work/Git/M347_Denis/KN07/describe-webapp-node1.png\")",
+      "Bash(cp \"C:/Users/denis/Pictures/Screenshots/Screenshot 2026-04-14 140639.png\" \"C:/work/Git/M347_Denis/KN07/describe-webapp-node2.png\")",
+      "mcp__plugin_playwright_playwright__browser_navigate",
+      "mcp__plugin_playwright_playwright__browser_take_screenshot"
     ]
   }
 }

@@ -1,0 +1,3 @@
+[     440ms] [LOG] response Response @ http://34.226.233.180:32000/:46
+[     440ms] [LOG] {} @ http://34.226.233.180:32000/:48
+[    1409ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://34.226.233.180:32000/favicon.ico:0

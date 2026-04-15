@@ -1,0 +1,13 @@
+- generic [ref=e2]:
+  - heading "User profile" [level=1] [ref=e3]
+  - img "user-profile" [ref=e4]
+  - text: "Name:"
+  - heading "Anna Smith" [level=3] [ref=e5]
+  - separator [ref=e6]
+  - text: "Email:"
+  - heading "anna.smith@example.com" [level=3] [ref=e7]
+  - separator [ref=e8]
+  - text: "Interests:"
+  - heading "coding" [level=3] [ref=e9]
+  - separator [ref=e10]
+  - button "Edit Profile" [ref=e11]
