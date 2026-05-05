@@ -1,0 +1,125 @@
+#cloud-config
+# source: https://gist.github.com/syntaqx/9dd3ff11fb3d48b032c84f3e31af9163
+users:
+  - name: ubuntu
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users, admin
+    home: /home/ubuntu
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCUBo+qnNu5xxM9vfz4C04M36FHxHNrEMdm5TkFj1/SfVtqunlUOeMpu7nFCZZKnX8HYwf/MkjcBiTYAgncxku8grwl6XuW/pcvmb6/ghSIaw4xtRRSzit7omqJ5d8kXB3+Nd1aaMHsjfly4nkaqswhySVXQqr8Hw6DbWVw8jLLVKEE+5NZHY33hJkhJwK4blCllsGpmQaKi1qxjsN0hZOWNK01iJAydwD8t2xJ0NOYbq8Qas5IyPnRN7SPxvEhIP6WLQ6Ym6Dmf8FwNW1cHLTKabgjzt5f/HKUkKS89dPd3fn4nnFli1BOMECGUIvVlOw2pQNri7+04OOfn2FGlqr5 teacher
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBSmzAAPJDuv9yYpUIk+TwNeTPI1tqUkR49yfeVBvs2h m347-kn04-key
+ssh_pwauth: false
+disable_root: false
+package_update: true
+package_upgrade: true
+groups:
+  - docker
+system_info:
+  default_user:
+    groups: [docker]
+packages:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - gnupg
+  - lsb-release
+  - unattended-upgrades
+final_message: "The system is finally up, after $UPTIME seconds"
+write_files:
+  - path: /opt/kn04/docker-compose.yml
+    permissions: '0644'
+    content: |
+      services:
+        db:
+          image: mariadb:latest
+          container_name: m347-kn04-cloud-db
+          environment:
+            MYSQL_ROOT_PASSWORD: kn02rootpw
+            MYSQL_DATABASE: m347
+          networks:
+            kn04_cloud_net:
+              ipv4_address: 172.12.5.10
+
+        web:
+          build:
+            context: ./web
+          container_name: m347-kn04-cloud-web
+          depends_on:
+            - db
+          ports:
+            - "80:80"
+          networks:
+            kn04_cloud_net:
+              ipv4_address: 172.12.5.11
+
+      networks:
+        kn04_cloud_net:
+          driver: bridge
+          ipam:
+            config:
+              - subnet: 172.12.0.0/16
+                ip_range: 172.12.5.0/24
+                gateway: 172.12.5.254
+
+  - path: /opt/kn04/web/Dockerfile
+    permissions: '0644'
+    content: |
+      FROM php:8.0-apache
+
+      WORKDIR /var/www/html
+      COPY info.php db.php ./
+
+      RUN docker-php-ext-install mysqli
+
+      EXPOSE 80
+
+  - path: /opt/kn04/web/info.php
+    permissions: '0644'
+    content: |
+      <?php
+      phpinfo();
+
+  - path: /opt/kn04/web/db.php
+    permissions: '0644'
+    content: |
+      <?php
+      $dbHost = 'db';
+      $dbUser = 'root';
+      $dbPass = 'kn02rootpw';
+      $dbName = 'm347';
+
+      $conn = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
+      ?>
+      <!DOCTYPE html>
+      <html lang="de">
+      <head>
+        <meta charset="UTF-8">
+        <title>DB Verbindungstest</title>
+      </head>
+      <body>
+        <h1>DB Verbindungstest</h1>
+        <?php if ($conn->connect_error): ?>
+          <p>Verbindung fehlgeschlagen: <?php echo htmlspecialchars($conn->connect_error); ?></p>
+        <?php else: ?>
+          <p>Verbindung erfolgreich zu MariaDB auf Host "<?php echo htmlspecialchars($dbHost); ?>".</p>
+          <?php
+          $result = $conn->query("SELECT VERSION() AS version");
+          if ($result && $row = $result->fetch_assoc()) {
+              echo '<p>MariaDB Version: ' . htmlspecialchars($row['version']) . '</p>';
+          }
+          ?>
+        <?php endif; ?>
+      </body>
+      </html>
+
+runcmd:
+  - mkdir -p /etc/apt/keyrings
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  - echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+  - apt-get update
+  - apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+  - systemctl enable docker
+  - systemctl start docker
+  # KN04 B) Anwendung starten
+  - cd /opt/kn04 && docker compose up -d --build

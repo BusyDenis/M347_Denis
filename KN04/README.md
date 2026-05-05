@@ -134,3 +134,62 @@ Darum kann `db` nicht aufgeloest werden und die Verbindung schlaegt fehl.
 6. **Logs anbinden** (im Foreground ohne `-d`) oder detached starten (mit `-d`)
 
 Kurz: `up` kombiniert typischerweise **build/pull + create + start** in einem Schritt.
+
+---
+
+## B) Docker Compose: Cloud
+
+Ziel: Die Loesung aus A) Teil a in der Cloud per Cloud-Init aufsetzen.
+Cloud-Init installiert Docker + Compose, schreibt alle benoetigten Dateien
+(`docker-compose.yml`, `Dockerfile`, `info.php`, `db.php`) und startet die
+Anwendung automatisch beim ersten Boot.
+
+### Verwendete Datei
+
+- `KN04/Cloud/cloud-init.yaml` (enthaelt alle anderen Dateien per `write_files`)
+
+### Aufbau der Cloud-Init Datei
+
+- **users**: eigener SSH-Key + oeffentlicher Schluessel der Lehrperson
+- **packages**: Basis-Pakete fuer das Docker-Repository
+- **write_files**:
+  - `/opt/kn04/docker-compose.yml` (mariadb:latest + Web via Build)
+  - `/opt/kn04/web/Dockerfile`
+  - `/opt/kn04/web/info.php`
+  - `/opt/kn04/web/db.php`
+- **runcmd**:
+  1. Docker-Repository einrichten und `docker-ce` + `docker-compose-plugin` installieren
+  2. Docker-Daemon starten
+  3. `docker compose up -d --build` in `/opt/kn04`
+
+### Netzwerk
+
+Eigener Range fuer den Cloud-Teil (anders als A/Teil a + A/Teil b):
+
+- subnet: `172.12.0.0/16`
+- ip_range: `172.12.5.0/24`
+- gateway: `172.12.5.254`
+
+### Deployment
+
+1. Bei Cloud-Provider eine Ubuntu-VM mit obiger `cloud-init.yaml` als
+   User-Data starten.
+2. Status pruefen: `tail -f /var/log/cloud-init-output.log`
+   (am Ende erscheint `final_message`).
+3. Aufrufen:
+   - `http://<PUBLIC_IP>/info.php`
+   - `http://<PUBLIC_IP>/db.php`
+
+### Vor dem Deployment anpassen
+
+- Eigenen oeffentlichen SSH-Schluessel im `ssh_authorized_keys`-Block einsetzen.
+- Oeffentlichen Schluessel der Lehrperson aus `../PublicKey` einsetzen.
+
+### Screenshots Teil B
+
+> TODO: Screenshots nach erfolgreichem Deployment einfuegen.
+> Adresszeile (URL) muss sichtbar sein, bei `info.php` zusaetzlich
+> die Felder `REMOTE_ADDR` und `SERVER_ADDR`.
+
+- `screenshots/kn04-cloud-info.png` — `http://<PUBLIC_IP>/info.php`
+- `screenshots/kn04-cloud-db.png` — `http://<PUBLIC_IP>/db.php`
